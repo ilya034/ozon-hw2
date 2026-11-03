@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ProductService.Client</RootNamespace>
+    <!-- Нужно, чтобы при генерации клиента нашлись google/api/annotations.proto и http.proto. -->
+    <IncludeHttpRuleProtos>true</IncludeHttpRuleProtos>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Контракт берётся из проекта Api, чтобы клиент и сервер не разъезжались. -->
+    <Protobuf Include="..\ProductService.Api\Protos\products.proto" GrpcServices="Client" ProtoRoot="..\ProductService.Api\Protos" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.36.2" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.85.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.85.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <!-- Только ради google/api/*.proto в пути импорта; код клиента от пакета не зависит. -->
+    <PackageReference Include="Microsoft.AspNetCore.Grpc.JsonTranscoding" Version="10.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

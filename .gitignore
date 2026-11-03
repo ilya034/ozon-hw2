@@ -1,0 +1,12 @@
+## Сборка .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.idea/
+
+## Артефакты тестов
+TestResults/
+*.trx
+.cache/
