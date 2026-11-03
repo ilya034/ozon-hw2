@@ -15,7 +15,10 @@ public sealed class InMemoryProductRepository : IProductRepository
         _products.TryAdd(product.Id, product);
     }
 
-    public Product? GetById(Guid id) => _products.TryGetValue(id, out var product) ? product : null;
+    public Product? GetById(Guid id)
+    {
+        return _products.TryGetValue(id, out var product) ? product : null;
+    }
 
     public PagedResult<Product> List(ProductFilter filter, int page, int pageSize)
     {
@@ -48,7 +51,7 @@ public sealed class InMemoryProductRepository : IProductRepository
             var warehouseId = filter.WarehouseId.Value;
             query = query.Where(p => p.WarehouseId == warehouseId);
         }
-        
+
         var ordered = query
             .OrderBy(p => p.CreatedAt)
             .ToList();

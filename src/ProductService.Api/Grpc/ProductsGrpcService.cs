@@ -42,7 +42,7 @@ public sealed class ProductsGrpcService(IProductAppService appService) : Proto.P
             TotalCount = page.TotalCount,
             Page = page.Page,
             PageSize = page.PageSize,
-            TotalPages = page.TotalPages,
+            TotalPages = page.TotalPages
         };
 
         response.Items.AddRange(page.Items.Select(ProductMapping.ToProto));

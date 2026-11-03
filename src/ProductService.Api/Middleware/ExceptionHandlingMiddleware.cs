@@ -35,7 +35,7 @@ public sealed class ExceptionHandlingMiddleware(
                 Title = "Product not found",
                 Detail = exception.Message,
                 Type = "https://tools.ietf.org/html/rfc9110#section-15.5.5",
-                Instance = context.Request.Path,
+                Instance = context.Request.Path
             }).ConfigureAwait(false);
         }
         catch (BadHttpRequestException exception)
@@ -47,12 +47,13 @@ public sealed class ExceptionHandlingMiddleware(
                 Status = StatusCodes.Status400BadRequest,
                 Title = "Bad request",
                 Detail = exception.Message,
-                Instance = context.Request.Path,
+                Instance = context.Request.Path
             }).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
         {
-            logger.LogInformation("Operation {Method} {Path} cancelled by client", context.Request.Method, context.Request.Path);
+            logger.LogInformation("Operation {Method} {Path} cancelled by client", context.Request.Method,
+                context.Request.Path);
         }
         catch (Exception exception)
         {
@@ -67,7 +68,7 @@ public sealed class ExceptionHandlingMiddleware(
                 Status = StatusCodes.Status500InternalServerError,
                 Title = "Internal server error",
                 Detail = "Operation finished with error",
-                Instance = context.Request.Path,
+                Instance = context.Request.Path
             }).ConfigureAwait(false);
         }
     }
@@ -80,7 +81,7 @@ public sealed class ExceptionHandlingMiddleware(
             Title = "Validation error",
             Detail = ValidationErrorMapper.ToSummary(exception),
             Instance = context.Request.Path,
-            Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+            Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1"
         };
 
         problem.Extensions["traceId"] = context.TraceIdentifier;
@@ -90,16 +91,14 @@ public sealed class ExceptionHandlingMiddleware(
 
     private static async Task WriteAsync(HttpContext context, ProblemDetails problem)
     {
-        if (context.Response.HasStarted)
-        {
-            return;
-        }
+        if (context.Response.HasStarted) return;
 
         context.Response.Clear();
         context.Response.StatusCode = problem.Status ?? StatusCodes.Status500InternalServerError;
         context.Response.ContentType = "application/problem+json";
 
-        await context.Response.WriteAsJsonAsync(problem, problem.GetType(), options: null, contentType: "application/problem+json")
+        await context.Response.WriteAsJsonAsync(problem, problem.GetType(), options: null,
+                contentType: "application/problem+json")
             .ConfigureAwait(false);
     }
 }

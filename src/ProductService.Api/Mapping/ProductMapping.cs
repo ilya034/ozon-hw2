@@ -23,7 +23,7 @@ internal static class ProductMapping
             Weight = product.Weight,
             Type = ToProto(product.Type),
             CreatedAt = Timestamp.FromDateTime(ToUtc(product.CreatedAt)),
-            WarehouseId = product.WarehouseId,
+            WarehouseId = product.WarehouseId
         };
     }
 
@@ -59,32 +59,38 @@ internal static class ProductMapping
             request.HasPageSize ? request.PageSize : DefaultPageSize);
     }
 
-    public static Proto.ProductType ToProto(ProductType type) => type switch
+    public static Proto.ProductType ToProto(ProductType type)
     {
-        ProductType.General => Proto.ProductType.General,
-        ProductType.HouseholdChemicals => Proto.ProductType.HouseholdChemicals,
-        ProductType.Electronics => Proto.ProductType.Electronics,
-        ProductType.Food => Proto.ProductType.Food,
-        _ => Proto.ProductType.Unspecified,
-    };
+        return type switch
+        {
+            ProductType.General => Proto.ProductType.General,
+            ProductType.HouseholdChemicals => Proto.ProductType.HouseholdChemicals,
+            ProductType.Electronics => Proto.ProductType.Electronics,
+            ProductType.Food => Proto.ProductType.Food,
+            _ => Proto.ProductType.Unspecified
+        };
+    }
 
-    public static ProductType ToDomain(Proto.ProductType type) => type switch
+    public static ProductType ToDomain(Proto.ProductType type)
     {
-        Proto.ProductType.General => ProductType.General,
-        Proto.ProductType.HouseholdChemicals => ProductType.HouseholdChemicals,
-        Proto.ProductType.Electronics => ProductType.Electronics,
-        Proto.ProductType.Food => ProductType.Food,
-        _ => ProductType.Unspecified,
-    };
+        return type switch
+        {
+            Proto.ProductType.General => ProductType.General,
+            Proto.ProductType.HouseholdChemicals => ProductType.HouseholdChemicals,
+            Proto.ProductType.Electronics => ProductType.Electronics,
+            Proto.ProductType.Food => ProductType.Food,
+            _ => ProductType.Unspecified
+        };
+    }
 
-    private static DateTime ToUtc(DateTime value) => DateTime.SpecifyKind(value, DateTimeKind.Utc);
+    private static DateTime ToUtc(DateTime value)
+    {
+        return DateTime.SpecifyKind(value, DateTimeKind.Utc);
+    }
 
     private static decimal ToDecimal(double value)
     {
-        if (!double.IsFinite(value) || value > (double)decimal.MaxValue || value < (double)decimal.MinValue)
-        {
-            return 0m;
-        }
+        if (!double.IsFinite(value) || value > (double)decimal.MaxValue || value < (double)decimal.MinValue) return 0m;
 
         return (decimal)value;
     }

@@ -11,5 +11,9 @@ public sealed record ListProductsRequest(
     int PageSize)
 {
     public static ListProductsRequest Empty { get; } = new(null, null, null, null, 1, 20);
-    public ProductFilter ToFilter() => new(CreatedFrom, CreatedTo, Type, WarehouseId);
+
+    public ProductFilter ToFilter()
+    {
+        return new ProductFilter(CreatedFrom, CreatedTo, Type, WarehouseId);
+    }
 }

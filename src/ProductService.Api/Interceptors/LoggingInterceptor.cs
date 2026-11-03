@@ -58,6 +58,8 @@ public sealed class LoggingInterceptor(ILogger<LoggingInterceptor> logger) : Int
         }
     }
 
-    private static string Format<T>(T message) =>
-        message is IMessage proto ? Formatter.Format(proto) : "<not a protobuf>";
+    private static string Format<T>(T message)
+    {
+        return message is IMessage proto ? Formatter.Format(proto) : "<not a protobuf>";
+    }
 }

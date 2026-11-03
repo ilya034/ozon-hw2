@@ -28,7 +28,7 @@ public sealed class ProductAppService(
             Weight = request.Weight,
             Type = request.Type,
             WarehouseId = request.WarehouseId,
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow
         };
 
         repository.Add(product);

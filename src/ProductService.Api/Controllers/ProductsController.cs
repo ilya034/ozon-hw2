@@ -40,7 +40,7 @@ public sealed class ProductsController(IProductAppService appService) : Controll
 
         return Ok(ToResponse(product));
     }
-    
+
     [HttpGet]
     [ProducesResponseType(typeof(PagedProductsResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -64,12 +64,15 @@ public sealed class ProductsController(IProductAppService appService) : Controll
             result.TotalPages));
     }
 
-    private static ProductHttpResponse ToResponse(Product product) => new(
-        product.Id,
-        product.Name,
-        product.Price,
-        product.Weight,
-        product.Type,
-        product.CreatedAt,
-        product.WarehouseId);
+    private static ProductHttpResponse ToResponse(Product product)
+    {
+        return new ProductHttpResponse(
+            product.Id,
+            product.Name,
+            product.Price,
+            product.Weight,
+            product.Type,
+            product.CreatedAt,
+            product.WarehouseId);
+    }
 }

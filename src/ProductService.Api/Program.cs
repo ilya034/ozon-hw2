@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Grpc.Swagger;
 using Microsoft.OpenApi.Models;
 using ProductService.Api.Grpc;
 using ProductService.Api.Interceptors;
@@ -51,9 +50,9 @@ builder.Services.AddSwaggerGen(options =>
         Title = "Product Service API",
         Version = "v1",
         Description = "Сервис хранения информации о товарах. "
-                      + "REST: /api/v1/products. gRPC: /v2/products.",
+                      + "REST: /api/v1/products. gRPC: /v2/products."
     });
-    
+
     options.CustomSchemaIds(type => (type.FullName ?? type.Name)
         .Replace("ProductService.", string.Empty, StringComparison.Ordinal)
         .Replace('+', '.'));
@@ -62,7 +61,7 @@ builder.Services.AddSwaggerGen(options =>
     if (File.Exists(xmlPath))
     {
         options.IncludeXmlComments(xmlPath);
-        options.IncludeGrpcXmlComments(xmlPath, includeControllerXmlComments: true);
+        options.IncludeGrpcXmlComments(xmlPath, true);
     }
 });
 

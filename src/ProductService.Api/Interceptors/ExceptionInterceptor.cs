@@ -13,7 +13,7 @@ public sealed class ExceptionInterceptor(ILogger<ExceptionInterceptor> logger) :
 {
     private static readonly JsonSerializerOptions TrailerJsonOptions = new()
     {
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
     };
 
     public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(
@@ -31,7 +31,7 @@ public sealed class ExceptionInterceptor(ILogger<ExceptionInterceptor> logger) :
                 "Validation error in {Method}: {Errors}",
                 context.Method,
                 ValidationErrorMapper.ToSummary(exception));
-            
+
             context.ResponseTrailers.Add(
                 ValidationErrorMapper.ValidationErrorsKey + "-bin",
                 Encoding.UTF8.GetBytes(JsonSerializer.Serialize(

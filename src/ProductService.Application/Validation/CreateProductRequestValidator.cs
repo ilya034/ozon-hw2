@@ -12,7 +12,8 @@ public sealed class CreateProductRequestValidator : AbstractValidator<CreateProd
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Наименование товара обязательно.")
-            .MaximumLength(NameMaxLength).WithMessage($"Наименование товара не должно превышать {NameMaxLength} символов.");
+            .MaximumLength(NameMaxLength)
+            .WithMessage($"Наименование товара не должно превышать {NameMaxLength} символов.");
 
         RuleFor(x => x.Price)
             .GreaterThan(0m).WithMessage("Цена товара должна быть больше нуля.");
