@@ -14,16 +14,15 @@ public sealed class ProductAppService(
     IValidator<GetProductRequest> getValidator,
     ILogger<ProductAppService> logger) : IProductAppService
 {
-    public async Task<long> CreateAsync(CreateProductRequest request, CancellationToken cancellationToken = default)
+    public async Task<Guid> CreateAsync(CreateProductRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
 
         await createValidator.ValidateAndThrowAsync(request, cancellationToken).ConfigureAwait(false);
 
-        var id = repository.NextId();
         var product = new Product
         {
-            Id = id,
+            Id = Guid.CreateVersion7(),
             Name = request.Name!.Trim(),
             Price = request.Price,
             Weight = request.Weight,

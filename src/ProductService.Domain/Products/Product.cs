@@ -2,7 +2,7 @@ namespace ProductService.Domain.Products;
 
 public sealed class Product
 {
-    public long Id { get; init; }
+    public Guid Id { get; init; }
 
     public required string Name { get; init; }
 

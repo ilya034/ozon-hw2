@@ -1,3 +1,3 @@
 namespace ProductService.Application.Models;
 
-public sealed record GetProductRequest(long Id);
+public sealed record GetProductRequest(Guid Id);

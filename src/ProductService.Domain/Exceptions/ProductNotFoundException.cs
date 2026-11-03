@@ -1,7 +1,7 @@
 namespace ProductService.Domain.Exceptions;
 
-public sealed class ProductNotFoundException(long id)
+public sealed class ProductNotFoundException(Guid id)
     : Exception($"Товар с идентификатором {id} не найден.")
 {
-    public long ProductId { get; } = id;
+    public Guid ProductId { get; } = id;
 }

@@ -8,6 +8,6 @@ public sealed class GetProductRequestValidator : AbstractValidator<GetProductReq
     public GetProductRequestValidator()
     {
         RuleFor(x => x.Id)
-            .GreaterThan(0).WithMessage("Идентификатор товара должен быть больше нуля.");
+            .NotEmpty().WithMessage("Идентификатор товара обязателен.");
     }
 }

@@ -5,7 +5,7 @@ namespace ProductService.Application.Abstractions;
 
 public interface IProductAppService
 {
-    Task<long> CreateAsync(CreateProductRequest request, CancellationToken cancellationToken = default);
+    Task<Guid> CreateAsync(CreateProductRequest request, CancellationToken cancellationToken = default);
 
     Task<PagedResult<Product>> ListAsync(ListProductsRequest request, CancellationToken cancellationToken = default);
 

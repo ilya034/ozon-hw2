@@ -19,7 +19,7 @@ public sealed class ListProductsRequestValidator : AbstractValidator<ListProduct
         RuleFor(x => x.CreatedTo)
             .GreaterThanOrEqualTo(x => x.CreatedFrom)
             .When(x => x.CreatedTo.HasValue && x.CreatedFrom.HasValue)
-            .WithMessage("Дата окончания периода не может быть раньше даты начала.");
+            .WithMessage("Дата окончания периода не может быть раньше даты начала периода.");
 
         RuleFor(x => x.Type)
             .IsInEnum().WithMessage("Вид товара должен быть.")
