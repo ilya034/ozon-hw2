@@ -10,3 +10,9 @@ obj/
 TestResults/
 *.trx
 .cache/
+
+.env
+.env.*
+!.env.example
+
+UrFuServerPersons/
