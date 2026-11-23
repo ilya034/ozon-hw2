@@ -9,6 +9,7 @@ using ProductService.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.ClearProviders();
 builder.Logging.AddSimpleConsole(options =>
 {
     options.SingleLine = false;
