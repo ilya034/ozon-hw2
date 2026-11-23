@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package products.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "ProductService.Api.Protos";
+
+service ProductService {
+  rpc CreateProduct (CreateProductRequest) returns (CreateProductResponse) {
+    option (google.api.http) = {
+      post: "/v2/products"
+      body: "*"
+    };
+  }
+
+  rpc GetProduct (GetProductRequest) returns (GetProductResponse) {
+    option (google.api.http) = { get: "/v2/products/{id}" };
+  }
+
+  rpc ListProducts (ListProductsRequest) returns (ListProductsResponse) {
+    option (google.api.http) = { get: "/v2/products" };
+  }
+}
+
+enum ProductType {
+  PRODUCT_TYPE_UNSPECIFIED = 0;
+  PRODUCT_TYPE_GENERAL = 1;
+  PRODUCT_TYPE_HOUSEHOLD_CHEMICALS = 2;
+  PRODUCT_TYPE_ELECTRONICS = 3;
+  PRODUCT_TYPE_FOOD = 4;
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  double price = 3;
+  double weight = 4;
+  ProductType type = 5;
+  google.protobuf.Timestamp created_at = 6;
+  int64 warehouse_id = 7;
+}
+
+message CreateProductRequest {
+  string name = 1;
+  double price = 2;
+  double weight = 3;
+  ProductType type = 4;
+  int64 warehouse_id = 5;
+}
+
+message CreateProductResponse {
+  string id = 1;
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+
+message GetProductResponse {
+  Product product = 1;
+}
+
+message ListProductsRequest {
+  optional google.protobuf.Timestamp created_from = 1;
+  optional google.protobuf.Timestamp created_to = 2;
+  optional ProductType type = 3;
+  optional int64 warehouse_id = 4;
+  optional int32 page = 5;
+  optional int32 page_size = 6;
+}
+
+message ListProductsResponse {
+  repeated Product items = 1;
+  int32 total_count = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
