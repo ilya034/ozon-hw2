@@ -1,4 +1,4 @@
-namespace ProductService.Api.Contracts;
+namespace ProductService.Api.Dtos;
 
 public sealed record PagedProductsResponse(
     IReadOnlyList<ProductHttpResponse> Items,
