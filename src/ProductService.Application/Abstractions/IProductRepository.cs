@@ -5,9 +5,15 @@ namespace ProductService.Application.Abstractions;
 
 public interface IProductRepository
 {
-    void Add(Product product);
+    Task<Guid> AddAsync(Product product, CancellationToken cancellationToken = default);
 
-    Product? GetById(Guid id);
+    Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    PagedResult<Product> List(ProductFilter filter, int page, int pageSize);
+    Task<PagedResult<Product>> ListAsync(
+        ProductFilter filter,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default);
+
+    Task<Product?> UpdateAsync(Product product, CancellationToken cancellationToken = default);
 }

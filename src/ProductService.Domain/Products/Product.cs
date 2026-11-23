@@ -12,7 +12,7 @@ public sealed class Product
 
     public ProductType Type { get; init; }
 
-    public DateTime CreatedAt { get; init; }
+    public DateTimeOffset CreatedAt { get; init; }
 
     public long WarehouseId { get; init; }
 }
