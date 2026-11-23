@@ -6,6 +6,7 @@ using ProductService.Api.Interceptors;
 using ProductService.Api.Middleware;
 using ProductService.Application;
 using ProductService.Infrastructure;
+using ProductService.Infrastructure.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,7 @@ builder.Logging.AddSimpleConsole(options =>
 builder.Logging.AddDebug();
 
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure();
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // gRPC + JSON transcoding (транскодинг публикует те же ручки по HTTP: /v2/products).
 // Валидация живёт в прикладном слое, поэтому gRPC, транскодинг и REST проверяются одинаково.
@@ -81,5 +82,7 @@ app.MapGet("/", () => Results.Redirect("/swagger"));
 app.MapControllers();
 app.MapGrpcService<ProductsGrpcService>();
 app.MapGrpcReflectionService();
+
+app.RunMigrations();
 
 app.Run();
