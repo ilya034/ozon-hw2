@@ -12,6 +12,7 @@ public sealed class ProductAppService(
     IValidator<CreateProductRequest> createValidator,
     IValidator<ListProductsRequest> listValidator,
     IValidator<GetProductRequest> getValidator,
+    IValidator<UpdateProductRequest> updateValidator,
     ILogger<ProductAppService> logger) : IProductAppService
 {
     public async Task<Guid> CreateAsync(CreateProductRequest request, CancellationToken cancellationToken = default)
@@ -28,13 +29,13 @@ public sealed class ProductAppService(
             Weight = request.Weight,
             Type = request.Type,
             WarehouseId = request.WarehouseId,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow
         };
 
-        repository.Add(product);
-        logger.LogInformation("Created product {ProductId} ({ProductName})", product.Id, product.Name);
+        var id = await repository.AddAsync(product, cancellationToken).ConfigureAwait(false);
+        logger.LogInformation("Created product {ProductId} ({ProductName})", id, product.Name);
 
-        return product.Id;
+        return id;
     }
 
     public async Task<PagedResult<Product>> ListAsync(
@@ -45,7 +46,10 @@ public sealed class ProductAppService(
 
         await listValidator.ValidateAndThrowAsync(request, cancellationToken).ConfigureAwait(false);
 
-        var result = repository.List(request.ToFilter(), request.Page, request.PageSize);
+        var result = await repository
+            .ListAsync(request.ToFilter(), request.Page, request.PageSize, cancellationToken)
+            .ConfigureAwait(false);
+
         logger.LogInformation(
             "List of products: page {Page}, page size {PageSize}, total found {TotalCount}",
             request.Page,
@@ -61,6 +65,31 @@ public sealed class ProductAppService(
 
         await getValidator.ValidateAndThrowAsync(request, cancellationToken).ConfigureAwait(false);
 
-        return repository.GetById(request.Id) ?? throw new ProductNotFoundException(request.Id);
+        return await repository.GetByIdAsync(request.Id, cancellationToken).ConfigureAwait(false)
+               ?? throw new ProductNotFoundException(request.Id);
+    }
+
+    public async Task<Product> UpdateAsync(UpdateProductRequest request, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        await updateValidator.ValidateAndThrowAsync(request, cancellationToken).ConfigureAwait(false);
+
+        var product = new Product
+        {
+            Id = request.Id,
+            Name = request.Name!.Trim(),
+            Price = request.Price,
+            Weight = request.Weight,
+            Type = request.Type,
+            WarehouseId = request.WarehouseId
+        };
+
+        var updated = await repository.UpdateAsync(product, cancellationToken).ConfigureAwait(false)
+                      ?? throw new ProductNotFoundException(request.Id);
+
+        logger.LogInformation("Updated product {ProductId} ({ProductName})", updated.Id, updated.Name);
+
+        return updated;
     }
 }

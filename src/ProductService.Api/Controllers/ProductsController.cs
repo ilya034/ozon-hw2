@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using ProductService.Api.Contracts;
+using ProductService.Api.Dtos;
 using ProductService.Api.Mapping;
 using ProductService.Application.Abstractions;
 using ProductService.Application.Models;
@@ -19,9 +19,9 @@ public sealed class ProductsController(IProductAppService appService) : Controll
         [FromBody] CreateProductHttpRequest request,
         CancellationToken cancellationToken)
     {
-        var id = await appService.CreateAsync(
-            new CreateProductRequest(request.Name, request.Price, request.Weight, request.Type, request.WarehouseId),
-            cancellationToken).ConfigureAwait(false);
+        var id = await appService
+            .CreateAsync(request.ToApplication(), cancellationToken)
+            .ConfigureAwait(false);
 
         return CreatedAtAction(
             nameof(GetById),
@@ -38,41 +38,40 @@ public sealed class ProductsController(IProductAppService appService) : Controll
             .GetByIdAsync(new GetProductRequest(id), cancellationToken)
             .ConfigureAwait(false);
 
-        return Ok(ToResponse(product));
+        return Ok(product.ToHttp());
     }
 
     [HttpGet]
     [ProducesResponseType(typeof(PagedProductsResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<PagedProductsResponse>> List(
-        [FromQuery] DateTime? createdFrom,
-        [FromQuery] DateTime? createdTo,
+        [FromQuery] DateTimeOffset? createdFrom,
+        [FromQuery] DateTimeOffset? createdTo,
         [FromQuery] ProductType? type,
         [FromQuery] long? warehouseId,
-        [FromQuery] int page = ProductMapping.DefaultPage,
-        [FromQuery] int pageSize = ProductMapping.DefaultPageSize,
+        [FromQuery] int page = ListProductsRequest.DefaultPage,
+        [FromQuery] int pageSize = ListProductsRequest.DefaultPageSize,
         CancellationToken cancellationToken = default)
     {
         var request = new ListProductsRequest(createdFrom, createdTo, type, warehouseId, page, pageSize);
         var result = await appService.ListAsync(request, cancellationToken).ConfigureAwait(false);
 
-        return Ok(new PagedProductsResponse(
-            result.Items.Select(ToResponse).ToList(),
-            result.TotalCount,
-            result.Page,
-            result.PageSize,
-            result.TotalPages));
+        return Ok(result.ToHttp());
     }
 
-    private static ProductHttpResponse ToResponse(Product product)
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(ProductHttpResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ProductHttpResponse>> Update(
+        Guid id,
+        [FromBody] UpdateProductHttpRequest request,
+        CancellationToken cancellationToken)
     {
-        return new ProductHttpResponse(
-            product.Id,
-            product.Name,
-            product.Price,
-            product.Weight,
-            product.Type,
-            product.CreatedAt,
-            product.WarehouseId);
+        var updated = await appService
+            .UpdateAsync(request.ToApplication(id), cancellationToken)
+            .ConfigureAwait(false);
+
+        return Ok(updated.ToHttp());
     }
 }

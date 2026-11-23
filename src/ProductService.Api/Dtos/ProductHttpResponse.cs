@@ -1,6 +1,6 @@
 using ProductService.Domain.Products;
 
-namespace ProductService.Api.Contracts;
+namespace ProductService.Api.Dtos;
 
 public sealed record ProductHttpResponse(
     Guid Id,
@@ -8,5 +8,5 @@ public sealed record ProductHttpResponse(
     decimal Price,
     double Weight,
     ProductType Type,
-    DateTime CreatedAt,
+    DateTimeOffset CreatedAt,
     long WarehouseId);

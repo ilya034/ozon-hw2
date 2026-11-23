@@ -12,7 +12,7 @@ public sealed class ProductsGrpcService(IProductAppService appService) : Proto.P
         ServerCallContext context)
     {
         var id = await appService
-            .CreateAsync(ProductMapping.ToApplication(request), context.CancellationToken)
+            .CreateAsync(request.ToApplication(), context.CancellationToken)
             .ConfigureAwait(false);
 
         return new Proto.CreateProductResponse { Id = id.ToString() };
@@ -23,10 +23,10 @@ public sealed class ProductsGrpcService(IProductAppService appService) : Proto.P
         ServerCallContext context)
     {
         var product = await appService
-            .GetByIdAsync(ProductMapping.ToApplication(request), context.CancellationToken)
+            .GetByIdAsync(request.ToApplication(), context.CancellationToken)
             .ConfigureAwait(false);
 
-        return new Proto.GetProductResponse { Product = ProductMapping.ToProto(product) };
+        return new Proto.GetProductResponse { Product = product.ToProto() };
     }
 
     public override async Task<Proto.ListProductsResponse> ListProducts(
@@ -34,19 +34,20 @@ public sealed class ProductsGrpcService(IProductAppService appService) : Proto.P
         ServerCallContext context)
     {
         var page = await appService
-            .ListAsync(ProductMapping.ToApplication(request), context.CancellationToken)
+            .ListAsync(request.ToApplication(), context.CancellationToken)
             .ConfigureAwait(false);
 
-        var response = new Proto.ListProductsResponse
-        {
-            TotalCount = page.TotalCount,
-            Page = page.Page,
-            PageSize = page.PageSize,
-            TotalPages = page.TotalPages
-        };
+        return page.ToProto();
+    }
 
-        response.Items.AddRange(page.Items.Select(ProductMapping.ToProto));
+    public override async Task<Proto.UpdateProductResponse> UpdateProduct(
+        Proto.UpdateProductRequest request,
+        ServerCallContext context)
+    {
+        var updated = await appService
+            .UpdateAsync(request.ToApplication(), context.CancellationToken)
+            .ConfigureAwait(false);
 
-        return response;
+        return new Proto.UpdateProductResponse { Product = updated.ToProto() };
     }
 }
