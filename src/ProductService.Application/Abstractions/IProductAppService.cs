@@ -10,4 +10,6 @@ public interface IProductAppService
     Task<PagedResult<Product>> ListAsync(ListProductsRequest request, CancellationToken cancellationToken = default);
 
     Task<Product> GetByIdAsync(GetProductRequest request, CancellationToken cancellationToken = default);
+
+    Task<Product> UpdateAsync(UpdateProductRequest request, CancellationToken cancellationToken = default);
 }
